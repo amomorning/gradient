@@ -1,0 +1,97 @@
+/**
+ * 
+ */
+package util;
+
+import controlP5.ControlP5;
+import processing.core.*;
+import utils.Tools;
+import wblut.geom.WB_Point;
+import wblut.geom.WB_Polygon;
+import wblut.hemesh.HE_Mesh;
+
+/**
+ * @author amo Aug 6, 2019
+ * 
+ */
+public class Main extends PApplet {
+
+	WB_Point pts[];
+	int cnt;
+	ControlP5 cp5;
+
+	float AA;
+	float BB;
+	
+	int color;
+	public void setup() {
+		size(900, 900);
+		pts = new WB_Point[10];
+		cp5 = new ControlP5(this);
+		cnt = 0;
+
+		cp5.addSlider("AA").setRange(0, 20000).setValue(10000).setPosition(20, 40);
+		cp5.addSlider("BB").setRange(0, 500).setValue(250).setPosition(20, 60);
+
+		for (int i = 300; i < 900; i += 300) {
+			for (int j = 300; j < 900; j += 300) {
+				pts[cnt++] = new WB_Point(i, j);
+			}
+		}
+
+
+	}
+
+	public void draw() {
+		background(0);
+		fill(255);
+		noStroke();
+		textSize(30);
+
+		for (int i = 0; i < 900; i += 2) {
+			for (int j = 0; j < 900; j += 2) {
+				int min = 255;
+				double total = 0;
+				for (int k = 0; k < cnt; ++k) {
+					double dis = distance(i, j, k);
+					if (dis != 0)
+						total += normalDistribution(dis);
+				}
+				color = (int) (BB*total);
+				if (color > 255)
+					color = 255;
+				fill(255 - color);
+				rect(i, j, 2, 2);
+
+				fill(0);
+				if(i%100 == 0 && j%100 == 0) {
+					text(" "+color, i, j);
+				}
+			}
+		}
+		fill(255, 0, 0);
+		for (int i = 0; i < cnt; ++i) {
+			rect(pts[i].xf(), pts[i].yf(), 2f, 2f);
+		}
+		
+		cp5.draw();
+
+	}
+
+	private double distance(int x, int y, int i) {
+		double tmp = (x - pts[i].xd()) * (x - pts[i].xd())
+				+ (y - pts[i].yd()) * (y - pts[i].yd());
+		return Math.sqrt(tmp);
+	}
+	
+	
+	public void mousePressed() {
+		int color = get(mouseX, mouseY) & 0xFF;
+		System.out.println(mouseX + " " + mouseY + " " + color);
+	}
+	
+	public double normalDistribution(double x) {
+		return 1.0/Math.sqrt(0.3*Math.PI)*Math.exp(-x*x/AA);
+	}
+
+ }
