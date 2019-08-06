@@ -71,6 +71,7 @@ public class Main extends PApplet {
 		}
 		fill(255, 0, 0);
 		for (int i = 0; i < cnt; ++i) {
+			
 			rect(pts[i].xf(), pts[i].yf(), 2f, 2f);
 		}
 		
