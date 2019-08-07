@@ -5,7 +5,15 @@ package util;
 
 import java.util.ArrayList;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.operation.buffer.BufferOp;
+
 import processing.core.PApplet;
+import wblut.geom.WB_Coord;
+import wblut.geom.WB_GeometryFactory;
 import wblut.geom.WB_Line;
 import wblut.geom.WB_Point;
 import wblut.geom.WB_Polygon;
@@ -63,7 +71,7 @@ public class block {
 	public void draw(PApplet app, double u) {
 		app.fill(0);
 		app.noStroke();
-		for(int i = 0; i < 5; ++ i) {
+		for(int i = 0; i < 4; ++ i) {
 			app.beginShape();
 			app.vertex(pts[i].xf(), pts[i].yf());
 			app.vertex(pts[(i+1)%4].xf(), pts[(i+1)%4].yf());
@@ -77,24 +85,26 @@ public class block {
 			
 
 			WB_Polygon ply = getPolygon(pts[i], pts[(i+1)%4], pts[4], u);
+			WB_Polygon newply = capRound(ply, 4, 1);
+			if(newply == null) {
+				break;
+			}
 			app.beginShape();
-			for(int j = 0; j < ply.getNumberOfPoints(); ++ j) {
-				WB_Point p = ply.getPoint(j);
+			for(int j = 0; j < newply.getNumberOfPoints(); ++ j) {
+				WB_Point p = newply.getPoint(j);
 				app.vertex(p.xf(), p.yf());
 			}
 			app.endShape();
 			WB_Point foot = toPoint(pts[i], pts[(i+1)%4], pt, 0.5);
 			
 			app.rect(foot.xf(), foot.yf(), 2f, 2f);
-			
+			app.ellipse(pts[i].xf(), pts[i].yf(), 8, 8);
 			app.fill(0);
 		}
-		
-		
 	}
 	
 	public WB_Polygon getPolygon(WB_Point a, WB_Point b, WB_Point c, double u) {
-		
+	
 		WB_Point pt = calcHeart(a, b, c);
 		ArrayList<WB_Point> points = new ArrayList<WB_Point>();
 		points.add(a);
@@ -123,5 +133,35 @@ public class block {
 		double c_edge = (a.sub(b)).normalizeSelf();
 		return ((a.mul(a_edge).add(b.mul(b_edge)).add(c.mul(c_edge)))).div(
 				a_edge + b_edge + c_edge);
+	}
+	
+	private WB_Polygon capRound(WB_Polygon ply, double r, double distance) {
+		try {
+			BufferOp b1 = new BufferOp(toJTSPolygon(ply));
+			b1.setEndCapStyle(BufferOp.CAP_ROUND);
+			Geometry g1 = b1.getResultGeometry(-r);
+
+			BufferOp b2 = new BufferOp(g1);
+			b2.setEndCapStyle(BufferOp.CAP_ROUND);
+			Geometry g2 = b2.getResultGeometry(r - distance);
+			return toWB_Polygon((Polygon) g2);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	private Polygon toJTSPolygon(WB_Polygon ply) {
+			WB_Coord[] polypt = ply.getPoints().toArray();
+		Coordinate[] pts = new Coordinate[polypt.length + 1];
+
+		for (int i = 0; i < polypt.length; ++i) {
+			pts[i] = new Coordinate(polypt[i].xd(), polypt[i].yd());
+		}
+		pts[polypt.length] = new Coordinate(polypt[0].xd(), polypt[0].yd());
+		return new GeometryFactory().createPolygon(pts);
+	}
+	
+	public static WB_Polygon toWB_Polygon(Polygon ply) {
+		return new WB_GeometryFactory().createPolygonFromJTSPolygon2D(ply);
 	}
 }

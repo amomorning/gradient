@@ -32,8 +32,8 @@ public class Main extends PApplet {
 		cp5 = new ControlP5(this);
 		cnt = 0;
 
-		cp5.addSlider("AA").setRange(0, 40000).setValue(10000).setPosition(20, 40);
-		cp5.addSlider("BB").setRange(0, 500).setValue(250).setPosition(20, 60);
+		cp5.addSlider("AA").setRange(0, 40000).setValue(25000).setPosition(20, 40);
+		cp5.addSlider("BB").setRange(0, 500).setValue(150).setPosition(20, 60);
 
 		for (int i = 300; i < 900; i += 300) {
 			for (int j = 300; j < 900; j += 300) {
@@ -111,7 +111,7 @@ public class Main extends PApplet {
 	}
 	
 	public void drawBlock() {
-		int step = 45;
+		int step = 60;
 		for(int i = 0; i < 900; i += step) {
 			for(int j = 0; j < 900; j += step) {
 				double total = 0;
