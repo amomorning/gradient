@@ -4,6 +4,7 @@
 package util;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -36,6 +37,12 @@ public class block {
 	 */
 	public block() {
 		// TODO Auto-generated constructor stub
+
+		Random rand = new Random(2333);
+			
+		for(int i = 0; i < 4; ++ i) {
+			pts[i] = new WB_Point(rand.nextInt(), rand.nextInt());
+		}
 		pts[0] = new WB_Point(200, 200);
 		pts[1] = new WB_Point(400, 200);
 		pts[2] = new WB_Point(400, 400);
@@ -95,11 +102,15 @@ public class block {
 				app.vertex(p.xf(), p.yf());
 			}
 			app.endShape();
-			WB_Point foot = toPoint(pts[i], pts[(i+1)%4], pt, 0.5);
+//			WB_Point foot = toPoint(pts[i], pts[(i+1)%4], pt, 0.5);
 			
-			app.rect(foot.xf(), foot.yf(), 2f, 2f);
-			app.ellipse(pts[i].xf(), pts[i].yf(), 8, 8);
+//			app.rect(foot.xf(), foot.yf(), 2f, 2f);
+//			app.ellipse(pts[i].xf(), pts[i].yf(), 8, 8);
 			app.fill(0);
+		}
+		 
+		for(int i = 0; i < 2; ++ i) {
+			
 		}
 	}
 	

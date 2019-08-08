@@ -3,6 +3,8 @@
  */
 package util;
 
+import java.util.Random;
+
 import controlP5.ControlP5;
 import processing.core.*;
 import utils.Tools;
@@ -28,20 +30,21 @@ public class Main extends PApplet {
 	boolean clicked = false;
 	public void setup() {
 		size(900, 900);
-		pts = new WB_Point[10];
+		pts = new WB_Point[22];
 		cp5 = new ControlP5(this);
-		cnt = 0;
+		cnt = 4;
 
 		cp5.addSlider("AA").setRange(0, 40000).setValue(25000).setPosition(20, 40);
 		cp5.addSlider("BB").setRange(0, 500).setValue(150).setPosition(20, 60);
 
-		for (int i = 300; i < 900; i += 300) {
-			for (int j = 300; j < 900; j += 300) {
-				pts[cnt++] = new WB_Point(i, j);
-			}
+
+		Random rand = new Random(21239);
+		for(int i = 0; i < cnt; ++ i) {
+			int x = (rand.nextInt()%900+900)%900;
+			int y = (rand.nextInt()%900+700)%900;
+			System.out.println("x = " + x + " " + "y = " + y);
+			pts[i] = new WB_Point(x, y);
 		}
-
-
 	}
 
 	public void draw() {
@@ -55,10 +58,10 @@ public class Main extends PApplet {
 		}
 		
 		fill(255, 0, 0);
-		for (int i = 0; i < cnt; ++i) {
-			
-			rect(pts[i].xf(), pts[i].yf(), 2f, 2f);
-		}
+//		for (int i = 0; i < cnt; ++i) {
+//			
+//			rect(pts[i].xf(), pts[i].yf(), 2f, 2f);
+//		}
 		block bb = new block(300, 300, 400);
 //		bb.draw(this, 0.3);
 //		
