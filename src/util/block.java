@@ -108,10 +108,6 @@ public class block {
 //			app.ellipse(pts[i].xf(), pts[i].yf(), 8, 8);
 			app.fill(0);
 		}
-		 
-		for(int i = 0; i < 2; ++ i) {
-			
-		}
 	}
 	
 	public WB_Polygon getPolygon(WB_Point a, WB_Point b, WB_Point c, double u) {
