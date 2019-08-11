@@ -86,8 +86,8 @@ public class PolyTrans {
 	}
 
 	public void display(PGraphics app) {
-		app.noFill();
 		app.stroke(0);
+		app.noFill();
 		hpp.drawPolygonEdges(polygons);
 		app.stroke(255, 0, 0);
 		hpp.drawPoint(centers, 10);

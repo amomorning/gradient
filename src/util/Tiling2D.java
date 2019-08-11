@@ -17,7 +17,7 @@ import wblut.hemesh.HE_Mesh;
  * @author amo Aug 6, 2019
  * 
  */
-public class Tilling2D extends PApplet {
+public class Tiling2D extends PApplet {
 
 	WB_Point pts[];
 	int cnt;
