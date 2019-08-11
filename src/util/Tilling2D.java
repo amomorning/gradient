@@ -5,6 +5,7 @@ package util;
 
 import java.util.Random;
 
+import Guo_Cam.CameraController;
 import controlP5.ControlP5;
 import processing.core.*;
 import utils.Tools;
@@ -16,7 +17,7 @@ import wblut.hemesh.HE_Mesh;
  * @author amo Aug 6, 2019
  * 
  */
-public class Main extends PApplet {
+public class Tilling2D extends PApplet {
 
 	WB_Point pts[];
 	int cnt;
@@ -29,7 +30,7 @@ public class Main extends PApplet {
 
 	boolean clicked = false;
 	public void setup() {
-		size(900, 900);
+		size(1600, 900);
 		pts = new WB_Point[22];
 		cp5 = new ControlP5(this);
 		cnt = 4;
@@ -125,7 +126,7 @@ public class Main extends PApplet {
 					color = 255;
 				double u = color / 255;
 
-				block bb = new block(i, j, step);
+				Block bb = new Block(i, j, step);
 				bb.draw(this, u);
 
 			}

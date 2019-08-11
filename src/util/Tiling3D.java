@@ -3,7 +3,7 @@ package util;
 import Guo_Cam.CameraController;
 import processing.core.PApplet;
 
-public class TransTest extends PApplet {
+public class Tiling3D extends PApplet {
 	CameraController cam;
 	PolyTrans polytrans;
 

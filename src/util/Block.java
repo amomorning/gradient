@@ -24,7 +24,7 @@ import wblut.geom.WB_Vector;
  * @author amo Aug 6, 2019 
  * 
  */
-public class block {
+public class Block {
 
 	
 	WB_Point pts[] = new WB_Point[5];
@@ -35,7 +35,7 @@ public class block {
 	/**
 	 * 
 	 */
-	public block() {
+	public Block() {
 		// TODO Auto-generated constructor stub
 
 		Random rand = new Random(2333);
@@ -56,7 +56,7 @@ public class block {
 		pts[4] = new WB_Point(xx/4, yy/4);
 	}
 	
-	public block(int x, int y, int a) {
+	public Block(int x, int y, int a) {
 		pts[0] = new WB_Point(x, y);
 		pts[1] = new WB_Point(x+a, y);
 		pts[2] = new WB_Point(x+a, y+a);
