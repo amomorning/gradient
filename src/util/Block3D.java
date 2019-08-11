@@ -56,26 +56,34 @@ public class Block3D {
 		app.noFill();
 	}
 
-	private void calcPolygon(double u) {
+	public void calcPolygon(double u) {
 		for (int i = 0; i < 4; ++i) {
 			WB_Polygon p = getPolygon(pts[i], pts[(i + 1) % 4], pts[4], u);
 			ply[i] = p;
 		}
-
 	}
 
 	public WB_Polygon getPolygon(WB_Point a, WB_Point b, WB_Point c, double u) {
 
 		WB_Point pt = calcHeart(a, b, c);
 		ArrayList<WB_Point> points = new ArrayList<WB_Point>();
-		points.add(a);
+		
+		double t = 0.01;
+		points.add(movePoint(a, b, c, t));
 		points.add(toPoint(a, b, pt, u));
-		points.add(b);
+		points.add(movePoint(b, a, c, t));
 		points.add(toPoint(b, c, pt, u));
-		points.add(c);
+		points.add(movePoint(c, b, a, t));
 		points.add(toPoint(c, a, pt, u));
 
 		return new WB_Polygon(points);
+	}
+	
+	private WB_Point movePoint(WB_Point a, WB_Point b, WB_Point c, double u) {
+		WB_Vector v1 = b.sub(a);
+		WB_Vector v2 = c.sub(a);
+		WB_Vector v3 = v1.add(v2);
+		return a.add(v3.mul(u));
 	}
 
 	private WB_Point toPoint(WB_Point a, WB_Point b, WB_Point c, double u) {

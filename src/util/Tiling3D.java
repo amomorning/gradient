@@ -1,7 +1,10 @@
 package util;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import igeo.ICurve;
+import igeo.IG;
 import igeo.ISurface;
 import igeo.IVec;
 import processing.core.PApplet;
@@ -24,6 +27,7 @@ public class Tiling3D extends PApplet {
 		// cam = new CameraController(this);
 		polytrans = new PolyTrans(this);
 
+		IG.init();
 		for(int i = 0; i < 4; ++ i) {
 //			System.out.println(polytrans.feets[i]);
 			System.out.println(polytrans.polygons.get(0).getPoint(i));
@@ -58,7 +62,7 @@ tools.cp5.addSlider("A").setRange(0, 40000).setValue(25000)
 	}
 	
 	private void draw3DRender() {
-		List<WB_Polygon> ply = polytrans.polygons;
+		ArrayList<WB_Polygon> ply = polytrans.polygons;
 		double mn = 1e15, mx = 0;
 		for(int i = 0; i < ply.size(); ++ i) {
 			Block3D b = new Block3D(ply.get(i).getPoints().toArray(), this);
@@ -66,13 +70,13 @@ tools.cp5.addSlider("A").setRange(0, 40000).setValue(25000)
 			for(int j = 0; j < 4; ++ j) {
 				total += normalDistribution(distance(b.pts[4], polytrans.feets[j]));
 			}
-			System.out.println("total = " + total);
+//			System.out.println("total = " + total);
 			mn = Math.min(mn, total);
 			mx = Math.max(mx, total);
 //			double u = total;
 //			b.display(this.g, u);
 		}
-		System.out.println(mn + " " + mx);
+//		System.out.println(mn + " " + mx);
 		for(int i = 0; i < ply.size(); ++ i) {
 			Block3D b = new Block3D(ply.get(i).getPoints().toArray(), this);
 			double total = 0;
@@ -84,7 +88,7 @@ tools.cp5.addSlider("A").setRange(0, 40000).setValue(25000)
 		}
 	}
 	
-	public static void savePolygonWithHolesAsSurf(WB_Polygon shellPoly, List<WB_Polygon> innnerPolys, int layer) {
+	public static void savePolygonWithHolesAsSurf(WB_Polygon shellPoly, ArrayList<WB_Polygon> innnerPolys, int layer) {
 		int shellPtsNum = shellPoly.getNumberOfPoints();
 		IVec[] shellPts = new IVec[shellPtsNum];
 
@@ -97,10 +101,14 @@ tools.cp5.addSlider("A").setRange(0, 40000).setValue(25000)
 
 		for (int i = 0; i < holeNum; i++) {
 
-			List<WB_Coord> pts = innnerPolys.get(i).getPoints().toList();
+			WB_Coord[] ptt = innnerPolys.get(i).getPoints().toArray();
+			ArrayList<WB_Point> pts = new ArrayList<>();
+			for(int j = 0; j < ptt.length; ++ j) {
+				pts.add((WB_Point)ptt[j]);
+			}
 			IVec[] ptsIG = new IVec[pts.size()];
 			for (int j = 0; j < pts.size(); j++) {
-				WB_Point pt = (WB_Point) pts.get(j);
+				WB_Point pt =  pts.get(j);
 				ptsIG[j] = new IVec(pt.xf(), pt.yf(), pt.zf());
 			}
 			innerPts[i] = ptsIG;
@@ -122,8 +130,8 @@ tools.cp5.addSlider("A").setRange(0, 40000).setValue(25000)
 	}
 	
 	private void drawPrint() {
-		List<WB_Polygon> ply = polytrans.polygons;
-		List<WB_Polygon> ply_fr = polytrans.polygons_fr;
+		ArrayList<WB_Polygon> ply = polytrans.polygons;
+		ArrayList<WB_Polygon> ply_fr = polytrans.polygons_fr;
 		for(int i = 0; i < ply.size(); ++ i) {
 			Block3D b = new Block3D(ply.get(i).getPoints().toArray(), this);
 			double total = 0;
@@ -141,12 +149,59 @@ tools.cp5.addSlider("A").setRange(0, 40000).setValue(25000)
 		}
 
 		if (key == 's') {
-			List<WB_Polygon> ply = polytrans.polygons;
+			ArrayList<WB_Polygon> ply = polytrans.polygons;
+			double mn = 1e15, mx = 0;
 			for(int i = 0; i < ply.size(); ++ i) {
 				Block3D b = new Block3D(ply.get(i).getPoints().toArray(), this);
-				
+				double total = 0;
+				for(int j = 0; j < 4; ++ j) {
+					total += normalDistribution(distance(b.pts[4], polytrans.feets[j]));
+				}
+//				System.out.println("total = " + total);
+				mn = Math.min(mn, total);
+				mx = Math.max(mx, total);
+//				double u = total;
+//				b.display(this.g, u);
 			}
-			//IG.save("testPolygonOutput.3dm");
+//			System.out.println(mn + " " + mx);
+			for(int i = 0; i < ply.size(); ++ i) {
+				Block3D b = new Block3D(ply.get(i).getPoints().toArray(), this);
+				double total = 0;
+				for(int j = 0; j < 4; ++ j) {
+					total += normalDistribution(distance(b.pts[4], polytrans.feets[j]));
+				}
+				double u = (total - mn)/(mx - mn)*BB+CC; 
+				b.calcPolygon(u);
+
+				WB_Polygon outP = new WB_Polygon(b.pts[0], b.pts[1], b.pts[2]);
+				ArrayList<WB_Polygon> innerP = new ArrayList<>();
+				innerP.add(b.ply[0]);
+				innerP.add(b.ply[1]);
+				if(b.ply[0] == null) continue;
+				savePolygonWithHolesAsSurf(outP, innerP, 0);
+				System.out.println("ok");
+				
+				outP = new WB_Polygon(b.pts[0], b.pts[2], b.pts[3]);
+				innerP = new ArrayList<>();
+				innerP.add(b.ply[2]);
+				innerP.add(b.ply[3]);
+				savePolygonWithHolesAsSurf(outP, innerP, 0);	
+				System.out.println("ok");
+			
+//				for(int j = 0; j < 4; ++ j) {
+//					List<WB_Coord> ppt = b.ply[j].getPoints().toList();
+//					IVec[] MVecList = new IVec[ppt.size()];
+//					for(int k = 0; k < ppt.size(); ++ k) {
+//						WB_Coord p = ppt.get(k); 
+//						MVecList[k] = new IVec(p.xf(), p.yf(), p.zf());
+//					}
+//					ICurve cur = new ICurve(MVecList, true).layer("" + i);
+//				}
+			}
+			IG.save("./model/face.3dm");
+			System.out.println("saved");
 		}
 	}
+	
+
 }
