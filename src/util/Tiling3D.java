@@ -50,10 +50,10 @@ public class Tiling3D extends PApplet {
 				.setPosition(20, 40);
 tools.cp5.addSlider("A").setRange(0, 40000).setValue(25000)
 				.setPosition(20, 100);
-		tools.cp5.addSlider("BB").setRange(0, 1).setValue(0.82f).setPosition(20,
+		tools.cp5.addSlider("BB").setRange(0, 1).setValue(0.60f).setPosition(20,
 				60);
 
-		tools.cp5.addSlider("CC").setRange(0, 1).setValue(0.22f).setPosition(20,
+		tools.cp5.addSlider("CC").setRange(0, 1).setValue(0.20f).setPosition(20,
 				80);
 	}
 	
@@ -175,16 +175,24 @@ tools.cp5.addSlider("A").setRange(0, 40000).setValue(25000)
 
 				WB_Polygon outP = new WB_Polygon(b.pts[0], b.pts[1], b.pts[2]);
 				ArrayList<WB_Polygon> innerP = new ArrayList<>();
-				innerP.add(b.ply[0]);
-				innerP.add(b.ply[1]);
-				if(b.ply[0] == null) continue;
+				for(int j = 0; j < 2; ++ j) {
+					if(b.ply[j] != null) innerP.add(b.ply[j]);
+				}
+				for(int j = 0; j < 6; ++ j) {
+					if(b.detail[j] != null) innerP.add(b.detail[j]);
+				}
 				savePolygonWithHolesAsSurf(outP, innerP, 0);
 				System.out.println("ok");
 				
 				outP = new WB_Polygon(b.pts[0], b.pts[2], b.pts[3]);
 				innerP = new ArrayList<>();
-				innerP.add(b.ply[2]);
-				innerP.add(b.ply[3]);
+				for(int j = 0; j < 2; ++ j) {
+					if(b.ply[j+2] != null) innerP.add(b.ply[j+2]);
+				}
+
+				for(int j = 0; j < 6; ++ j) {
+					if(b.detail[j+6] != null) innerP.add(b.detail[j+6]);
+				}
 				savePolygonWithHolesAsSurf(outP, innerP, 0);	
 				System.out.println("ok");
 			
