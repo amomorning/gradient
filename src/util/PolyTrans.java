@@ -90,13 +90,13 @@ public class PolyTrans {
 		app.noFill();
 		hpp.drawPolygonEdges(polygons);
 		app.stroke(255, 0, 0);
-		hpp.drawPoint(centers, 10);
+//		hpp.drawPoint(centers, 10);
 		app.stroke(255, 0, 0);
-		hpp.drawSegment(segments);
+//		hpp.drawSegment(segments);
 		app.fill(0, 0, 255);
-		for (int i = 0; i < size; i++) {
-			textDisplay(app, i + "", centers.get(i), 30);
-		}
+//		for (int i = 0; i < size; i++) {
+//			textDisplay(app, i + "", centers.get(i), 30);
+//		}
 		hpp.drawPoint(feets,40);
 
 		//

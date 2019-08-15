@@ -40,33 +40,24 @@ public class Main extends PApplet{
 	WB_Polygon ply, hole;
 	
 	HE_Mesh mesh;
+	
+	Gradient grad;
+	
+	boolean isHole = false;
+	
 	public void setup() {
+
 		size(1600, 900, P3D);
 		tools = new Tools(this, len);
 		// cam = new CameraController(this);
 		polytrans = new PolyTrans(this);
+		grad = new Gradient(polytrans.feets);
 
 		IG.init();
 		
 		setMeshes();
-
-//		MeshBlock b = meshblock.get(0);
-//		b.mesh.triangulate();
-//		HE_Face f = b.mesh.getFaceWithIndex(0);
-//		WB_Transform T = new WB_Transform(f.getFaceCenter(), f.getFaceNormal(), WB_Point.ORIGIN(), WB_Vector.Z());
-//		WB_Transform rT = new WB_Transform(WB_Point.ORIGIN(), WB_Vector.Z(), f.getFaceCenter(), f.getFaceNormal());
-//		
-//		ply = new WB_Polygon(f.toPolygon().apply(T).getPoints());
-//		hole = Tools.JTSOffset(ply, 60, 50);
-//
-//		ply = createPolygonWithPolygonHoles(ply, hole);
-//		
-//
-//		mesh = new HE_Mesh(new HEC_Polygon(ply, 0));
-//		mesh.applySelf(rT);
-//		ply = new WB_Polygon(ply.apply(rT).getPoints());
-//		b.mesh.applySelf(rT);
-		
+	
+		if(isHole) setHoles();
 		
 	}
 	
@@ -97,23 +88,37 @@ public class Main extends PApplet{
 		for(WB_Polygon ply: polytrans.polygons) {
 			meshblock.add(new MeshBlock(this, ply));
 		}
-		
+	
+		List<Double> out = new ArrayList<>();
 		for(MeshBlock b:meshblock) {
-			b.u = 0.8f;
+			b.u = grad.calcPosition(b.getCenter());
+			out.add(b.u);
+			
+			b.setSegments();
+		}
+		Collections.sort(out);
+		System.out.println(Collections.min(out));
+		System.out.println(Collections.max(out));
+		
+	}
+	
+	private void setHoles() {
+		for(MeshBlock b:meshblock) {
 			b.setHoles(10);
 		}
 	}
 
 	public void draw() {
 		background(255);
-		 tools.cam.drawSystem(len);
-		tools.cam.openLight();
+		tools.cam.drawSystem(len);
+		if(isHole) tools.cam.openLight();
 		scale(-1, 1, 1);
-		polytrans.display(this.g);
+		if(!isHole) polytrans.display(this.g);
 		
 
 		for(MeshBlock b:meshblock) {
 			b.display(this.g);
+//			break;
 		}
 
 //		noFill();
@@ -126,6 +131,19 @@ public class Main extends PApplet{
 		tools.drawCP5();
 	}
 	
+	public void keyPressed() {
+		if(key == '1') {
+			grad.setFunctionType(1);
+		} else if(key == '2') {
+			grad.setFunctionType(2);
+		} else if(key == '3') {
+			grad.setFunctionType(3);
+		} else if(key == '0') {
+			grad.isMin = !grad.isMin;
+		}
+		setMeshes();
+		if(isHole) setHoles();
+	}
 
 
 }
