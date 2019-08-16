@@ -117,16 +117,16 @@ public class Main extends PApplet {
 			meshblock.add(new MeshBlock(this, ply));
 		}
 
-		List<Double> out = new ArrayList<>();
+//		List<Double> out = new ArrayList<>();
 		for (MeshBlock b : meshblock) {
 			b.u = grad.calcPosition(b.getCenter());
-			out.add(b.u);
+//			out.add(b.u);
 
 			b.setSegments();
 		}
-		Collections.sort(out);
-		System.out.println(Collections.min(out));
-		System.out.println(Collections.max(out));
+//		Collections.sort(out);
+//		System.out.println(Collections.min(out));
+//		System.out.println(Collections.max(out));
 
 	}
 

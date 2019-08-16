@@ -20,7 +20,7 @@ import wblut.geom.WB_Vector;
 import wblut.processing.WB_Render3D;
 
 public class PolyTrans {
-	static final String dataAddress = "./model/transpoly8_10.3dm";
+	static final String dataAddress = "../model/transpoly8_10.3dm";
 	static final int i1 = 0, i2 = 2;
 	static final int linenum = 20, offset = 1800;
 

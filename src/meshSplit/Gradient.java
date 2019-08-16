@@ -23,7 +23,7 @@ public class Gradient {
 
 	int numberOfPoints;
 	double u;
-	int functionType = 2;
+	int functionType = 3;
 	static int functionNum = 3;
 
 	private List<WB_Point> pts;

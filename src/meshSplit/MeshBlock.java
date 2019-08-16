@@ -12,6 +12,7 @@ import processing.core.PGraphics;
 import utils.Tools;
 import wblut.geom.WB_Coord;
 import wblut.geom.WB_GeometryFactory;
+import wblut.geom.WB_GeometryOp;
 import wblut.geom.WB_Point;
 import wblut.geom.WB_Polygon;
 import wblut.geom.WB_Segment;
@@ -46,6 +47,7 @@ public class MeshBlock {
 	int numberOfPoints;
 
 	static double triLength = 100;
+	static double faceSplit = 360;
 
 	double u = 1;
 
@@ -139,6 +141,7 @@ public class MeshBlock {
 		// innerP =
 		List<WB_Polygon> plys = new ArrayList<>();
 
+		double totalLen = 0;
 		for (int i = 0; i < 4; ++i) {
 			WB_Segment line = new WB_Segment(pts.get(i), innerP[i]);
 			WB_Point A = pts.get(i + 1);
@@ -169,12 +172,18 @@ public class MeshBlock {
 
 			HEC_FromPolygons creator = new HEC_FromPolygons(plys);
 			meshes[i] = new HE_Mesh(creator);
+			
+			totalLen += WB_GeometryOp.getDistance3D(innerP[i], innerP[(i+1)%4]);
 
 		}
+		totalLen /= 4;
 		WB_Polygon square = new WB_Polygon(innerP);
 		HEC_Polygon creator = new HEC_Polygon(square, 0);
 		meshes[4] = new HE_Mesh(creator);
-		HET_MeshOp.splitFacesTri(meshes[4]);
+
+		for(int i = 0; i*faceSplit < totalLen; ++ i) {
+			HET_MeshOp.splitFacesTri(meshes[4]);
+		}
 
 	}
 
@@ -207,8 +216,8 @@ public class MeshBlock {
 					hole = Tools.JTSOffset(ply, (1 - u) * 40 + 5,
 						20 * (1 - u) + 10);
 				}else  {
-					hole = Tools.JTSOffset(ply, (1 - u) * 50 + 10,
-						40 * (1 - u) + 10);
+					hole = Tools.JTSOffset(ply, (1 - u) * 45 + 5,
+						20 * (1 - u) + 10);
 				}
 
 				ply = createPolygonWithPolygonHoles(ply, hole);
