@@ -30,7 +30,7 @@ public class Gradient {
 	
 	double minDist = 2437.8389106352893;
 	double maxDist = 17059.758565740645;
-	boolean isMin = false;
+	boolean isMin = true;
 
 	public Gradient(WB_Coord... pt) {
 		pts = new ArrayList<>();

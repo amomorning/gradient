@@ -126,7 +126,7 @@ public class MeshBlock {
 			midP[i] = pts.get(i).add(pts.get((i+1)%4)).div(2);
 			segs.add(new WB_Segment(midP[i], O));
 			
-			innerP[i] = segs.get(i).curvePoint(u);
+			innerP[i] = segs.get(i).curvePoint(0.5);
 		}
 		
 
@@ -171,8 +171,8 @@ public class MeshBlock {
 						f.toPolygon().apply(T).getPoints());
 				WB_Polygon hole;
 				if(i < 4) {
-					hole = Tools.JTSOffset(ply, (1 - u) * 40 + 5,
-						20 * (1 - u) + 10);
+					hole = Tools.JTSOffset(ply, (1 - u) * 5 + 38,
+						10 * (1 - u) + 20);
 				}else  {
 					hole = Tools.JTSOffset(ply, (1 - u) * 45 + 5,
 						20 * (1 - u) + 10);

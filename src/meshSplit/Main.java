@@ -74,7 +74,7 @@ public class Main extends PApplet {
 		List<HE_Mesh> outMesh = new ArrayList<>();
 		List<HE_Mesh> outMeshWithHole = new ArrayList<>();
 		for (MeshBlock b : meshblock) {
-			for (int i = 0; i < 5; ++i) {
+			for (int i = 0; i < 1; ++i) {
 				outMesh.add(b.meshes[i]);
 			}
 			for (HE_Mesh mesh : b.resultMeshes) {
