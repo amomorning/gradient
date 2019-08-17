@@ -54,7 +54,7 @@ public class Main extends PApplet {
 		polytrans = new PolyTrans(this);
 		grad = new Gradient(polytrans.feets);
 
-		IG.init();
+//		IG.init();
 
 		setMeshes();
 
@@ -118,7 +118,7 @@ public class Main extends PApplet {
 		}
 
 //		List<Double> out = new ArrayList<>();
-		for (MeshBlock b : meshblock) {
+		for (MeshBlock b: meshblock) {
 			b.u = grad.calcPosition(b.getCenter());
 //			out.add(b.u);
 

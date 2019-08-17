@@ -23,14 +23,14 @@ public class Gradient {
 
 	int numberOfPoints;
 	double u;
-	int functionType = 3;
+	int functionType = 2;
 	static int functionNum = 3;
 
 	private List<WB_Point> pts;
 	
 	double minDist = 2437.8389106352893;
 	double maxDist = 17059.758565740645;
-	boolean isMin = true;
+	boolean isMin = false;
 
 	public Gradient(WB_Coord... pt) {
 		pts = new ArrayList<>();

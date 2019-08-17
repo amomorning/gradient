@@ -29,7 +29,7 @@ import wblut.processing.WB_Render3D;
  * @author amo Aug 13, 2019
  * 
  */
-public class MeshBlock {
+public class MeshBlock_old {
 
 	/**
 	 * 
@@ -45,16 +45,15 @@ public class MeshBlock {
 	private static final WB_GeometryFactory gf = new WB_GeometryFactory();
 
 	int numberOfPoints;
-	int numberOfMeshes = 1;
 
 	static double triLength = 100;
 	static double faceSplit = 360;
 
-	double u = 0.5;
+	double u = 1;
 
-	WB_Point[] midP;
+	WB_Point[] innerP;
 
-	public MeshBlock(PApplet app, WB_Coord... points) {
+	public MeshBlock_old(PApplet app, WB_Coord... points) {
 		resultMeshes = new ArrayList<>();
 
 		numberOfPoints = points.length;
@@ -67,11 +66,11 @@ public class MeshBlock {
 		mesh = new HE_Mesh(new HEC_Polygon(ply, 0));
 		resultMeshes.add(mesh);
 
-//		System.out.println(resultMeshes.size());
+		System.out.println(resultMeshes.size());
 		render = new WB_Render3D(app);
 	}
 
-	public MeshBlock(PApplet app, WB_Polygon poly) {
+	public MeshBlock_old(PApplet app, WB_Polygon poly) {
 		numberOfPoints = poly.getNumberOfPoints();
 		resultMeshes = new ArrayList<>();
 
@@ -88,7 +87,7 @@ public class MeshBlock {
 	}
 
 	public void display(PGraphics app) {
-		for (int i = 0; i < numberOfMeshes; ++i) {
+		for (int i = 0; i < 5; ++i) {
 			app.fill(getColor());
 			app.noStroke();
 			render.drawFaces(meshes[i]);
@@ -101,7 +100,7 @@ public class MeshBlock {
 		// render.drawSegment(segs);
 
 		app.fill(255, 0, 0);
-		render.drawPoint(midP, 20);
+		render.drawPoint(innerP, 20);
 	}
 	
 	public void dispalyWithHole(PGraphics app) {
@@ -115,34 +114,77 @@ public class MeshBlock {
 	}
 
 	public void setSegments() {
-		meshes = new HE_Mesh[numberOfMeshes];
+		meshes = new HE_Mesh[5];
 		segs = new ArrayList<WB_Segment>();
-		midP = new WB_Point[4];
-		
-		WB_Point O = ply.getCenter();
-		WB_Point[] innerP = new WB_Point[4];
+		innerP = new WB_Point[4];
 
-		for(int i = 0; i < 4; ++ i) {
-			midP[i] = pts.get(i).add(pts.get((i+1)%4)).div(2);
-			segs.add(new WB_Segment(midP[i], O));
-			
-			innerP[i] = segs.get(i).curvePoint(u);
+		innerP[0] = new WB_Point();
+		double temp = 1.0;
+		for (int i = 0; i < 4; ++i) {
+			innerP[0].addSelf(pts.get((i + 1) % 4).mul(temp));
+			temp /= u;
 		}
-		
+		innerP[0].mulSelf((1.0 - 1.0 / u) / (1 - temp));
+		System.out.println(innerP[0]);
 
-		List<WB_Polygon> meshPly = new ArrayList<>();
-		for(int i = 0; i < 4; ++ i) {
-			int j = (i+1)%4;
-			meshPly.add(new WB_Polygon(midP[i], pts.get(j), innerP[i]));
-			meshPly.add(new WB_Polygon(pts.get(j), innerP[j], innerP[i]));
-			meshPly.add(new WB_Polygon(pts.get(j), midP[j], innerP[j]));
-			meshPly.add(new WB_Polygon(innerP[i], innerP[j], O));
+		for (int i = 1; i < 4; ++i) {
+			innerP[i] = innerP[i - 1].sub(pts.get(i)).mul(u);
+			innerP[i].addSelf(pts.get(i));
+			// innerP[i] = new WB_Point();
 		}
 
+		for (int i = 0; i < 4; ++i) {
+			segs.add(new WB_Segment(innerP[i], innerP[(i + 1) % 4]));
+			segs.add(new WB_Segment(innerP[i], pts.get(i)));
+		}
 
-		HEC_FromPolygons creator = new HEC_FromPolygons(meshPly);
-		meshes[0] = new HE_Mesh(creator);
+		// innerP =
+		List<WB_Polygon> plys = new ArrayList<>();
+
+		double totalLen = 0;
+		for (int i = 0; i < 4; ++i) {
+			WB_Segment line = new WB_Segment(pts.get(i), innerP[i]);
+			WB_Point A = pts.get(i + 1);
+
+			double len = line.getLength();
+			System.out.println("edge length = " + len);
+
+			List<WB_Point> ptt = new ArrayList<>();
+
+			for (int j = 1; j * triLength < len; ++j) {
+
+				WB_Point B = line.curvePoint(j * triLength / len);
+				System.out.println(A + "\n" + B);
+				segs.add(new WB_Segment(A, B));
+				ptt.add(B);
+			}
+
+			if (ptt.size() == 0) {
+				plys.add(new WB_Polygon(pts.get(i), A, innerP[i]));
+			} else {
+
+				plys.add(new WB_Polygon(pts.get(i), A, ptt.get(0)));
+				for (int j = 0; j < ptt.size() - 1; ++j) {
+					plys.add(new WB_Polygon(ptt.get(j), A, ptt.get(j + 1)));
+				}
+				plys.add(new WB_Polygon(ptt.get(ptt.size() - 1), A, innerP[i]));
+			}
+
+			HEC_FromPolygons creator = new HEC_FromPolygons(plys);
+			meshes[i] = new HE_Mesh(creator);
 			
+			totalLen += WB_GeometryOp.getDistance3D(innerP[i], innerP[(i+1)%4]);
+
+		}
+		totalLen /= 4;
+		WB_Polygon square = new WB_Polygon(innerP);
+		HEC_Polygon creator = new HEC_Polygon(square, 0);
+		meshes[4] = new HE_Mesh(creator);
+
+		for(int i = 0; i*faceSplit < totalLen; ++ i) {
+			HET_MeshOp.splitFacesTri(meshes[4]);
+		}
+
 	}
 
 	public int getColor() {
@@ -159,7 +201,7 @@ public class MeshBlock {
 		// mesh.triangulate();
 
 		resultMeshes = new ArrayList<>();
-		for (int i = 0; i < numberOfMeshes; ++i) {
+		for (int i = 0; i < 5; ++i) {
 			List<HE_Face> faces = meshes[i].getFaces();
 			for (HE_Face f : faces) {
 				WB_Transform T = new WB_Transform(f.getFaceCenter(),
