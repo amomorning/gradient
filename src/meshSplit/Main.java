@@ -12,7 +12,6 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import igeo.IG;
 import processing.core.PApplet;
-import util.PolyTrans;
 import utils.Tools;
 import wblut.geom.WB_Coord;
 import wblut.geom.WB_GeometryFactory;
@@ -44,7 +43,7 @@ public class Main extends PApplet {
 
 	Gradient grad;
 
-	boolean isHole = true;
+	boolean isHole = false;
 
 	public void setup() {
 
@@ -53,7 +52,9 @@ public class Main extends PApplet {
 		// cam = new CameraController(this);
 		polytrans = new PolyTrans(this);
 		grad = new Gradient(polytrans.feets);
-
+		for(WB_Point pt:polytrans.feets) {
+			System.out.println(pt);
+		}
 //		IG.init();
 
 		setMeshes();
@@ -132,11 +133,11 @@ public class Main extends PApplet {
 
 	private void setHoles() {
 		int cnt = 0;
-//		meshblock.get(600).setHoles();
-		for (MeshBlock b : meshblock) {
-			b.setHoles();
-			System.out.println("Finished Mesh Panel #" + (cnt++));
-		}
+		meshblock.get(600).setHoles();
+//		for (MeshBlock b : meshblock) {
+//			b.setHoles();
+//			System.out.println("Finished Mesh Panel #" + (cnt++));
+//		}
 	}
 
 	public void draw() {

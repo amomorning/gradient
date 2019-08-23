@@ -7,6 +7,7 @@ import igeo.ICurve;
 import igeo.IG;
 import igeo.ISurface;
 import igeo.IVec;
+import meshSplit.PolyTrans;
 import processing.core.PApplet;
 import utils.Tools;
 import wblut.geom.WB_Coord;
